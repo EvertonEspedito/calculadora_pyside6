@@ -13,7 +13,7 @@ if __name__ == '__main__':
 
     label1 = QLabel('O meu texto')
     label1.setStyleSheet('font-size: 150px;')
-    window.v_layout.addWidget(label1)
+    window.vLayout.addWidget(label1)
     window.adjustFixedSize()
     # Define o ícone
     icon = QIcon(str(WINDOW_ICON_PATH))
