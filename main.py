@@ -19,8 +19,9 @@ if __name__ == '__main__':
 
     # Display
     display = Display()
-    window.addToVLayout(display)# 3:20
+    window.addToVLayout(display)
 
+    
     # Executa tudo
     window.adjustFixedSize()
     window.show()
