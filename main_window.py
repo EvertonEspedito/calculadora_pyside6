@@ -11,7 +11,7 @@ class MainWindow(QMainWindow):
         self.setCentralWidget(self.cw)
 
         # Título da janela
-        self.setWindowTitle('Calculadora')
+        self.setWindowTitle('Calculadora PS6')
 
     def adjustFixedSize(self):
         # Última coisa a ser feita
