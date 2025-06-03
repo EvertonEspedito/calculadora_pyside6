@@ -3,6 +3,9 @@ import sys
 from main_window import MainWindow
 from display import Display
 from info import Info
+from buttons import ButtonsGrid
+
+
 from styles import setupTheme
 from PySide6.QtWidgets import QApplication, QLineEdit
 from PySide6.QtGui import QIcon
@@ -22,14 +25,17 @@ if __name__ == '__main__':
 
     #Info
     info = Info("2.0 ^ 10.0 = 1024.0")
-    window.addToVLayout(info)
+    window.addWidgetToVLayout(info)
     
 
     # Display
     display = Display()
     display.setPlaceholderText("Digite aqui...")
-    window.addToVLayout(display)
+    window.addWidgetToVLayout(display)
 
+    #Grid 
+    buttonsGrid = ButtonsGrid()
+    window.vLayout.addLayout(buttonsGrid)
 
     # Executa tudo
     window.adjustFixedSize()
