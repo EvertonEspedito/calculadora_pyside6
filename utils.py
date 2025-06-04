@@ -12,7 +12,8 @@ def isValidNumber(string: str):
         float(string)
         valid = True
     except ValueError:
-        return valid 
+        valid = False
+    return valid
 
-def isEmpity(string: str):
+def isEmpty(string: str):
     return len(string) == 0
