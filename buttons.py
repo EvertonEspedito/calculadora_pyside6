@@ -36,7 +36,11 @@ class ButtonsGrid(QGridLayout):
         self.display = display
         self.info = info
         self._equation = ''
+        self._left = None
+        self._right = None
+        self._op = None
         self._makeGrid()
+        
 
     @property
     def equation(self):
@@ -67,6 +71,11 @@ class ButtonsGrid(QGridLayout):
         text = button.text()
         if text == 'C':
            self._connectButtonClicked(button, self._clear)
+        if text in '+-/*':
+           self._connectButtonClicked(
+               button, 
+               self._makeSlot(self._operatorClicked, button)
+            )   
 
     def _makeSlot(self, func, *args, **kwargs):
         @Slot(bool)
@@ -85,3 +94,21 @@ class ButtonsGrid(QGridLayout):
 
     def _clear(self):
         self.display.clear()
+
+    def _operatorClicked(self, button):
+        buttonText = button.text()
+        displayText = self.display.text()
+        self.display.clear()
+
+        if not isValidNumber(displayText) and self._left is None:
+            print("Entrada inválida, por favor, digite um número.")
+            return
+        
+        if self._left is None:
+            self._left = float(displayText)
+
+        self._op = buttonText
+        self.equation
+        print(buttonText)
+
+        #7:50
