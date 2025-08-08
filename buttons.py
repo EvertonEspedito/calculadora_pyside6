@@ -36,9 +36,12 @@ class ButtonsGrid(QGridLayout):
         self.display = display
         self.info = info
         self._equation = ''
+        self._equationInitialValue = '0'
         self._left = None
         self._right = None
         self._op = None
+
+        self.equation = self._equationInitialValue
         self._makeGrid()
         
 
@@ -75,7 +78,10 @@ class ButtonsGrid(QGridLayout):
            self._connectButtonClicked(
                button, 
                self._makeSlot(self._operatorClicked, button)
-            )   
+            )
+
+        if text in '=':
+           self._connectButtonClicked(button, self._eq)
 
     def _makeSlot(self, func, *args, **kwargs):
         @Slot(bool)
@@ -93,22 +99,36 @@ class ButtonsGrid(QGridLayout):
         self.display.insert(buttonText)
 
     def _clear(self):
+        self._left = None
+        self._right = None
+        self._op = None
+        self.equation = self._equationInitialValue
         self.display.clear()
 
     def _operatorClicked(self, button):
-        buttonText = button.text()
-        displayText = self.display.text()
-        self.display.clear()
+        buttonText = button.text() # pega o texto do botão +-/*
+        displayText = self.display.text()# pega o texto do display da esquerda 
+        self.display.clear() # limpa o display
 
+        # Verifica se o display está vazio ou se o texto é inválido
         if not isValidNumber(displayText) and self._left is None:
             print("Entrada inválida, por favor, digite um número.")
             return
-        
+        # Se o display estiver vazio, não faz nada
         if self._left is None:
             self._left = float(displayText)
 
-        self._op = buttonText
-        self.equation
-        print(buttonText)
+        self._op = buttonText # armazena o operador
+        self.equation = f'{self._left} {self._op} ??' # atualiza a equação na info
 
-        #7:50
+    def _eq(self):
+        displayText = self.display.text()
+        if not isValidNumber(displayText):
+            print("Entrada inválida, por favor, digite um número.")
+            return
+        
+        self._right = float(displayText) # armazena o número da direita
+        self.equation = f'{self._left} {self._op} {self._right}' # atualiza a equação na info
+
+        #7:17
+        
