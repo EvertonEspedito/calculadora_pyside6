@@ -6,6 +6,7 @@ from utils import isEmpty, isNumOrDot, isValidNumber
 from variables import MEDIUM_FONT_SIZE
 
 if TYPE_CHECKING:
+    from main_window import MainWindow
     from display import Display
     from info import Info
 
@@ -23,11 +24,11 @@ class Button(QPushButton):
         self.setMinimumSize(75, 75)
 
 class ButtonsGrid(QGridLayout):   
-    def __init__(self, display: 'Display',info: 'Info',*args, **kwargs):
+    def __init__(self, display: 'Display',info: 'Info', window: 'MainWindow',*args, **kwargs):
         super().__init__(*args, **kwargs)
 
         self._gridMask = [
-            ['C', '◀', '^', '/'],
+            ['C', 'D', '^', '/'],
             ['7', '8', '9', '*'],
             ['4', '5', '6', '-'],
             ['1', '2', '3', '+'],
@@ -35,6 +36,7 @@ class ButtonsGrid(QGridLayout):
         ]
         self.display = display
         self.info = info
+        self.window = window
         self._equation = ''
         self._equationInitialValue = '0'
         self._left = None
@@ -74,7 +76,11 @@ class ButtonsGrid(QGridLayout):
         text = button.text()
         if text == 'C':
            self._connectButtonClicked(button, self._clear)
-        if text in '+-/*':
+
+        if text in 'D':
+           self._connectButtonClicked(button, self.display.backspace)
+
+        if text in '+-/*^':
            self._connectButtonClicked(
                button, 
                self._makeSlot(self._operatorClicked, button)
@@ -112,7 +118,7 @@ class ButtonsGrid(QGridLayout):
 
         # Verifica se o display está vazio ou se o texto é inválido
         if not isValidNumber(displayText) and self._left is None:
-            print("Entrada inválida, por favor, digite um número.")
+            self._showError("Entrada inválida, por favor, digite um número.")
             return
         # Se o display estiver vazio, não faz nada
         if self._left is None:
@@ -124,11 +130,36 @@ class ButtonsGrid(QGridLayout):
     def _eq(self):
         displayText = self.display.text()
         if not isValidNumber(displayText):
-            print("Entrada inválida, por favor, digite um número.")
+            self._showError("Entrada inválida, por favor, digite um número.")
             return
         
         self._right = float(displayText) # armazena o número da direita
         self.equation = f'{self._left} {self._op} {self._right}' # atualiza a equação na info
+        result = 'Error'
+        try:
+            if '^' in self.equation:
+                base, exponent = self.equation.split('^')
+                result = float(base) ** float(exponent)
+            else:
+                result = eval(self.equation) # evalua a equação
+        except ZeroDivisionError:
+            self._showError("Erro: Divisão por zero.")
+        except OverflowError:
+            self._showError("Erro: Resultado muito grande.")
+        except Exception as e:
+            self._showError(f"Erro ao calcular a equação: {e}")
+            return
 
-        #7:17
-        
+        self.display.clear() # limpa o display
+        self.info.setText(f'{self.equation} = {result}') # atualiza a info com o resultado
+        self._left = result # armazena o resultado como o novo número da esquerda
+        self._right = None # limpa o número da direita             
+
+        if result == 'Error':
+             self._left = None
+             
+    def _showError(self, message):
+        msgBox = self.window.makeMsgBox("Erro", message)
+        msgBox.setText(message)
+        msgBox.setIcon(msgBox.Icon.Critical)
+        msgBox.exec()
