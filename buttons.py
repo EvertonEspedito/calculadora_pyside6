@@ -77,7 +77,7 @@ class ButtonsGrid(QGridLayout):
         if text == 'C':
            self._connectButtonClicked(button, self._clear)
 
-        if text in 'D':
+        if text == 'D':
            self._connectButtonClicked(button, self.display.backspace)
 
         if text in '+-/*^':
@@ -86,7 +86,7 @@ class ButtonsGrid(QGridLayout):
                self._makeSlot(self._operatorClicked, button)
             )
 
-        if text in '=':
+        if text == '=':
            self._connectButtonClicked(button, self._eq)
 
     def _makeSlot(self, func, *args, **kwargs):
@@ -157,9 +157,18 @@ class ButtonsGrid(QGridLayout):
 
         if result == 'Error':
              self._left = None
-             
+     
+    
     def _showError(self, message):
         msgBox = self.window.makeMsgBox("Erro", message)
         msgBox.setText(message)
         msgBox.setIcon(msgBox.Icon.Critical)
+        msgBox.setStandardButtons(msgBox.StandardButton.Ok)
+        msgBox.exec()
+
+    def _info(self, message):
+        msgBox = self.window.makeMsgBox("Erro", message)
+        msgBox.setText(message)
+        msgBox.setIcon(msgBox.Icon.Information)
+        msgBox.setStandardButtons(msgBox.StandardButton.Ok)
         msgBox.exec()
